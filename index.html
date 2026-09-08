@@ -370,7 +370,7 @@
             });
         }
 
-        // Fungsi untuk menambah data (akan dipanggil saat Anda mengirim data)
+        // Fungsi untuk menambah data
         function addBudgetItem(category, item, amount, notes = '') {
             budgetData.push({
                 category: category,
@@ -381,13 +381,8 @@
             updateDashboard();
         }
 
-        // Contoh data awal (bisa dihapus atau dimodifikasi)
-        // addBudgetItem('Legal & Compliance', 'Pendirian PT & Legal Opinion', 50000000, 'Termasuk konsultan hukum crypto');
-        // addBudgetItem('Development', 'Smart Contract & Frontend', 160000000, 'Solidity, React, Web3 Integration');
-        // addBudgetItem('Security', 'Smart Contract Audit', 80000000, 'Audit oleh firma tier-2');
-        // addBudgetItem('Infrastructure', 'RPC Nodes & Server', 50000000, '6 bulan operasional');
-        // addBudgetItem('Marketing', 'Community & KOL', 80000000, 'Discord, Telegram, Twitter');
-        // addBudgetItem('Liquidity', 'Initial DEX Liquidity', 130000000, 'Termasuk dana darurat');
+        // Data yang sudah dimasukkan
+        addBudgetItem('Infrastruktur', 'Server Dell PowerEdge R750 xs', 172575000, 'RAM 16GB, Storage 2x SSD');
 
         // Update dashboard saat halaman dimuat
         updateDashboard();
