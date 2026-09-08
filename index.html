@@ -70,6 +70,11 @@
             box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
         }
 
+        .card.pending {
+            border: 1px solid rgba(250, 112, 154, 0.5);
+            background: rgba(250, 112, 154, 0.05);
+        }
+
         .card-title {
             font-size: 0.9em;
             color: #a0a0a0;
@@ -82,6 +87,13 @@
             font-size: 2em;
             font-weight: bold;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .card.pending .card-value {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -149,12 +161,31 @@
             color: #667eea;
         }
 
+        .amount.pending {
+            color: #fa709a;
+        }
+
         .percentage {
             display: inline-block;
             padding: 5px 10px;
             background: rgba(102, 126, 234, 0.2);
             border-radius: 5px;
             font-size: 0.9em;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-left: 8px;
+        }
+
+        .status-pending {
+            background: rgba(250, 112, 154, 0.2);
+            color: #fa709a;
+            border: 1px solid rgba(250, 112, 154, 0.4);
         }
 
         @media (max-width: 768px) {
@@ -198,9 +229,9 @@
                 <div class="card-title">Sisa Anggaran</div>
                 <div class="card-value" id="remainingBudget">Rp 550.000.000</div>
             </div>
-            <div class="card">
-                <div class="card-title">Jumlah Item</div>
-                <div class="card-value" id="categoryCount">0</div>
+            <div class="card pending">
+                <div class="card-title">Dana Belum Tersedia</div>
+                <div class="card-value" id="pendingBudget">Rp 0</div>
             </div>
         </div>
 
@@ -251,16 +282,9 @@
                 datasets: [{
                     data: [],
                     backgroundColor: [
-                        '#667eea',
-                        '#764ba2',
-                        '#f093fb',
-                        '#4facfe',
-                        '#43e97b',
-                        '#fa709a',
-                        '#fee140',
-                        '#30cfd0',
-                        '#f6d365',
-                        '#fda085'
+                        '#667eea', '#764ba2', '#f093fb', '#4facfe', 
+                        '#43e97b', '#fa709a', '#fee140', '#30cfd0', 
+                        '#f6d365', '#fda085', '#a18cd1', '#fbc2eb'
                     ],
                     borderWidth: 0
                 }]
@@ -336,16 +360,28 @@
 
         // Fungsi untuk update dashboard
         function updateDashboard() {
-            const allocated = budgetData.reduce((sum, item) => sum + item.amount, 0);
+            let allocated = 0;
+            let pending = 0;
+
+            budgetData.forEach(item => {
+                if (item.isPending) {
+                    pending += item.amount;
+                } else {
+                    allocated += item.amount;
+                }
+            });
+
             const remaining = totalBudget - allocated;
 
             // Update summary cards
             document.getElementById('allocatedBudget').textContent = `Rp ${allocated.toLocaleString('id-ID')}`;
             document.getElementById('remainingBudget').textContent = `Rp ${remaining.toLocaleString('id-ID')}`;
+            document.getElementById('pendingBudget').textContent = `Rp ${pending.toLocaleString('id-ID')}`;
             document.getElementById('categoryCount').textContent = budgetData.length;
 
-            // Update charts
-            pieChart.data.labels = budgetData.map(item => item.category);
+            // Update charts (only allocated for clean visual, or we can mark pending differently)
+            // For simplicity, we map all, but the pending card highlights the gap
+            pieChart.data.labels = budgetData.map(item => item.category + (item.isPending ? ' (*)' : ''));
             pieChart.data.datasets[0].data = budgetData.map(item => item.amount);
             pieChart.update();
 
@@ -359,12 +395,15 @@
 
             budgetData.forEach((item, index) => {
                 const percentage = ((item.amount / totalBudget) * 100).toFixed(1);
+                const pendingBadge = item.isPending ? '<span class="status-badge status-pending">BELUM TERSEDIA</span>' : '';
+                const amountClass = item.isPending ? 'amount pending' : 'amount';
+                
                 const row = `
                     <tr>
                         <td>${index + 1}</td>
                         <td>${item.category}</td>
-                        <td>${item.item}</td>
-                        <td class="amount">Rp ${item.amount.toLocaleString('id-ID')}</td>
+                        <td>${item.item} ${pendingBadge}</td>
+                        <td class="${amountClass}">Rp ${item.amount.toLocaleString('id-ID')}</td>
                         <td><span class="percentage">${percentage}%</span></td>
                         <td>${item.notes || '-'}</td>
                     </tr>
@@ -374,12 +413,13 @@
         }
 
         // Fungsi untuk menambah data
-        function addBudgetItem(category, item, amount, notes = '') {
+        function addBudgetItem(category, item, amount, notes = '', isPending = false) {
             budgetData.push({
                 category: category,
                 item: item,
                 amount: amount,
-                notes: notes
+                notes: notes,
+                isPending: isPending
             });
             updateDashboard();
         }
@@ -393,6 +433,9 @@
         addBudgetItem('Pengembangan Smart Contract', 'Pembuatan Token TRC20', 50000000, 'Deploy dan konfigurasi token standar TRC20 di jaringan Tron');
         addBudgetItem('Pengembangan Platform', 'Program Platform Masternode', 50000000, 'Sistem node, staking, dan reward mechanism');
         addBudgetItem('Pengembangan Platform', 'Pembuatan Internal Market', 50000000, 'Fitur pertukaran aset internal platform (order book/AMM)');
+        
+        // Data baru: Modal USDT yang belum tersedia
+        addBudgetItem('Modal / Pendanaan', 'Akuisisi Modal USDT', 54000000, 'Target: $3,000 x Rp18.000', true);
 
         // Update dashboard saat halaman dimuat
         updateDashboard();
