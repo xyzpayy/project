@@ -182,7 +182,7 @@
     <div class="container">
         <header>
             <h1>📊 Dashboard Anggaran</h1>
-            <p class="subtitle">Crypto Startup - Perencanaan Modal Rp550.000.000</p>
+            <p class="subtitle">Crypto Startup (BossX) - Perencanaan Modal Rp550.000.000</p>
         </header>
 
         <div class="summary-cards">
@@ -258,7 +258,9 @@
                         '#43e97b',
                         '#fa709a',
                         '#fee140',
-                        '#30cfd0'
+                        '#30cfd0',
+                        '#f6d365',
+                        '#fda085'
                     ],
                     borderWidth: 0
                 }]
@@ -296,7 +298,8 @@
                     data: [],
                     backgroundColor: 'rgba(102, 126, 234, 0.6)',
                     borderColor: 'rgba(102, 126, 234, 1)',
-                    borderWidth: 2
+                    borderWidth: 2,
+                    borderRadius: 5
                 }]
             },
             options: {
@@ -387,6 +390,9 @@
         addBudgetItem('Infrastruktur', 'Server Dell PowerEdge R750 xs', 172575000, 'RAM 16GB, Storage 2x SSD');
         addBudgetItem('Infrastruktur Digital', 'Domain www.bossx.io', 500000, 'Pembelian domain tahunan');
         addBudgetItem('Infrastruktur Digital', 'Email Bisnis (Workspace/G Suite)', 1500000, 'Langganan email profesional');
+        addBudgetItem('Pengembangan Smart Contract', 'Pembuatan Token TRC20', 50000000, 'Deploy dan konfigurasi token standar TRC20 di jaringan Tron');
+        addBudgetItem('Pengembangan Platform', 'Program Platform Masternode', 50000000, 'Sistem node, staking, dan reward mechanism');
+        addBudgetItem('Pengembangan Platform', 'Pembuatan Internal Market', 50000000, 'Fitur pertukaran aset internal platform (order book/AMM)');
 
         // Update dashboard saat halaman dimuat
         updateDashboard();
