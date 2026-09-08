@@ -51,7 +51,7 @@
 
         .summary-cards {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 20px;
             margin-bottom: 40px;
         }
@@ -84,7 +84,7 @@
         }
 
         .card-value {
-            font-size: 2em;
+            font-size: 1.8em;
             font-weight: bold;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             -webkit-background-clip: text;
@@ -198,7 +198,7 @@
             }
 
             .card-value {
-                font-size: 1.5em;
+                font-size: 1.4em;
             }
         }
 
@@ -228,6 +228,10 @@
             <div class="card">
                 <div class="card-title">Sisa Anggaran</div>
                 <div class="card-value" id="remainingBudget">Rp 550.000.000</div>
+            </div>
+            <div class="card">
+                <div class="card-title">Jumlah Item</div>
+                <div class="card-value" id="categoryCount">0</div>
             </div>
             <div class="card pending">
                 <div class="card-title">Dana Belum Tersedia</div>
@@ -379,8 +383,7 @@
             document.getElementById('pendingBudget').textContent = `Rp ${pending.toLocaleString('id-ID')}`;
             document.getElementById('categoryCount').textContent = budgetData.length;
 
-            // Update charts (only allocated for clean visual, or we can mark pending differently)
-            // For simplicity, we map all, but the pending card highlights the gap
+            // Update charts
             pieChart.data.labels = budgetData.map(item => item.category + (item.isPending ? ' (*)' : ''));
             pieChart.data.datasets[0].data = budgetData.map(item => item.amount);
             pieChart.update();
@@ -392,6 +395,11 @@
             // Update table
             const tbody = document.getElementById('budgetTable');
             tbody.innerHTML = '';
+
+            if (budgetData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="loading">Menunggu data anggaran...</td></tr>';
+                return;
+            }
 
             budgetData.forEach((item, index) => {
                 const percentage = ((item.amount / totalBudget) * 100).toFixed(1);
@@ -421,7 +429,6 @@
                 notes: notes,
                 isPending: isPending
             });
-            updateDashboard();
         }
 
         // ==========================================
@@ -437,7 +444,7 @@
         // Data baru: Modal USDT yang belum tersedia
         addBudgetItem('Modal / Pendanaan', 'Akuisisi Modal USDT', 54000000, 'Target: $3,000 x Rp18.000', true);
 
-        // Update dashboard saat halaman dimuat
+        // Update dashboard setelah semua data dimasukkan
         updateDashboard();
     </script>
 </body>
