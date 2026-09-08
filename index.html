@@ -199,7 +199,7 @@
                 <div class="card-value" id="remainingBudget">Rp 550.000.000</div>
             </div>
             <div class="card">
-                <div class="card-title">Jumlah Kategori</div>
+                <div class="card-title">Jumlah Item</div>
                 <div class="card-value" id="categoryCount">0</div>
             </div>
         </div>
@@ -381,8 +381,12 @@
             updateDashboard();
         }
 
-        // Data yang sudah dimasukkan
+        // ==========================================
+        // DATA ANGGARAN YANG SUDAH DIMASUKKAN
+        // ==========================================
         addBudgetItem('Infrastruktur', 'Server Dell PowerEdge R750 xs', 172575000, 'RAM 16GB, Storage 2x SSD');
+        addBudgetItem('Infrastruktur Digital', 'Domain www.bossx.io', 500000, 'Pembelian domain tahunan');
+        addBudgetItem('Infrastruktur Digital', 'Email Bisnis (Workspace/G Suite)', 1500000, 'Langganan email profesional');
 
         // Update dashboard saat halaman dimuat
         updateDashboard();
